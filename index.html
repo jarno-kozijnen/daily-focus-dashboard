@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Focus Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a202c;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .date-info {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .stat {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .stat.warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat.success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #1a202c;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .task-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .task-item.done {
+            background: #c6f6d5;
+            border-left-color: #22543d;
+        }
+
+        .task-item.overdue {
+            background: #fed7d7;
+            border-left-color: #c53030;
+        }
+
+        .task-item.warning-hours {
+            background: #feebc8;
+            border-left-color: #d97706;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .task-item.done .checkbox {
+            background: #22543d;
+            border-color: #22543d;
+            color: white;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-client {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .task-detail {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 3px;
+        }
+
+        .task-time {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            white-space: nowrap;
+        }
+
+        .task-item.done .task-time {
+            color: #22543d;
+        }
+
+        .task-item.overdue .task-time {
+            color: #c53030;
+        }
+
+        .postpone-btn {
+            background: #cbd5e0;
+            color: #2d3748;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .postpone-btn:hover {
+            background: #a0aec0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .warning-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .week-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .day-card {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .day-card.future {
+            opacity: 0.7;
+        }
+
+        .day-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .day-tasks {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .day-hours {
+            font-size: 12px;
+            background: #e2e8f0;
+            padding: 4px 6px;
+            border-radius: 3px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .reset-btn {
+            background: #cbd5e0;
+            color: #2d3748;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .quick-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📍 Daily Focus Dashboard</h1>
+            <div class="date-info" id="date-display"></div>
+
+            <div class="quick-stats">
+                <div class="stat">
+                    <div class="stat-number" id="tasks-today">0</div>
+                    <div class="stat-label">Vandaag</div>
+                </div>
+                <div class="stat" id="hours-stat">
+                    <div class="stat-number">0h</div>
+                    <div class="stat-label">Totaal uren</div>
+                </div>
+                <div class="stat success" id="completed-stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Afgerond</div>
+                </div>
+                <div class="stat" id="remaining-stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Te gaan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WARNINGS -->
+        <div id="warnings"></div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchView('today')">📅 Vandaag</button>
+            <button class="tab-btn" onclick="switchView('week')">📊 Deze week</button>
+            <button class="tab-btn" onclick="switchView('overdue')">⚠️ Achterstand</button>
+        </div>
+
+        <!-- TODAY VIEW -->
+        <div id="today-view" class="tab-view">
+            <div class="section">
+                <h2>Taken voor vandaag</h2>
+                <div id="today-tasks"></div>
+            </div>
+        </div>
+
+        <!-- WEEK VIEW -->
+        <div id="week-view" class="tab-view" style="display: none;">
+            <div class="section">
+                <h2>Planning deze week</h2>
+                <div id="week-preview"></div>
+            </div>
+        </div>
+
+        <!-- OVERDUE VIEW -->
+        <div id="overdue-view" class="tab-view" style="display: none;">
+            <div class="section">
+                <h2>Achterstand (gemist)</h2>
+                <div id="overdue-tasks"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; color: white; font-size: 12px; margin-top: 30px; opacity: 0.8;">
+            Last updated: <span id="last-updated">-</span>
+        </div>
+    </div>
+
+    <script>
+        // Tasks from Google Sheet
+        const allTasks = [
+            // KUCHENWELT
+            { id: 1, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: '11× Betonlook, Eiland, Greeploos, etc.', deadline: '2026-05-15', hours: 3, status: 'pending' },
+            { id: 2, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: 'Batch Mei Blok 1 (10×)', deadline: '2026-05-19', hours: 4, status: 'pending' },
+            { id: 3, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: 'Batch Mei Blok 2 (10×)', deadline: '2026-05-21', hours: 4, status: 'pending' },
+            { id: 4, client: 'Kuchenwelt', type: 'Linkbuilding', name: 'Linkbuilding batch', deadline: '2026-05-20', hours: 2, status: 'pending' },
+
+            // KITCHEN247
+            { id: 5, client: 'Kitchen247', type: 'SEO Content (Blogs)', name: '6× Blogs inhaal April', deadline: '2026-05-15', hours: 1, status: 'pending' },
+            { id: 6, client: 'Kitchen247', type: 'SEO Content (Blogs)', name: '6× Blogs batch mei', deadline: '2026-05-20', hours: 1, status: 'pending' },
+            { id: 7, client: 'Kitchen247', type: 'Linkbuilding', name: 'Linkbuilding batch', deadline: '2026-05-20', hours: 2, status: 'pending' },
+
+            // BAMBOOSA
+            { id: 8, client: 'Bamboosa', type: 'Google Ads', name: 'Wekelijkse check (Google/Meta)', deadline: '2026-05-18', hours: 1, status: 'pending' },
+            { id: 9, client: 'Bamboosa', type: 'Google Ads', name: 'Wekelijkse check (Google/Meta)', deadline: '2026-05-25', hours: 1, status: 'pending' },
+
+            // PLAATWEB
+            { id: 10, client: 'Plaatweb', type: 'Google Ads', name: 'Google Ads check & optimalisatie', deadline: '2026-05-18', hours: 1, status: 'pending' },
+            { id: 11, client: 'Plaatweb', type: 'Google Ads', name: 'Google Ads check & optimalisatie', deadline: '2026-05-25', hours: 1, status: 'pending' },
+
+            // DIRECT VERDUURZAMEN
+            { id: 12, client: 'Direct Verduurzamen', type: 'Content-dag', name: '5 blogs + 5 herschrijven + projects + SM + dashboard', deadline: '2026-05-18', hours: 8, status: 'pending' },
+            { id: 13, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-18', hours: 0.5, status: 'pending' },
+            { id: 14, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-21', hours: 0.5, status: 'pending' },
+            { id: 15, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-25', hours: 0.5, status: 'pending' },
+            { id: 16, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-28', hours: 0.5, status: 'pending' },
+            { id: 17, client: 'Direct Verduurzamen', type: 'Linkbuilding', name: 'Linkbuilding', deadline: '2026-05-20', hours: 0.5, status: 'pending' },
+
+            // MTPAPIER
+            { id: 18, client: 'MTpapier', type: 'Nieuwsbrief', name: 'Nieuwsbrief maken', deadline: '2026-05-14', hours: 1, status: 'pending' },
+            { id: 19, client: 'MTpapier', type: 'Nieuwsbrief', name: 'Batch: 4 nieuwsbrieven', deadline: '2026-05-21', hours: 2, status: 'pending' },
+        ];
+
+        let tasks = JSON.parse(localStorage.getItem('focus-tasks')) || allTasks;
+        const today = new Date('2026-05-13');
+
+        function getDateStr(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            const days = ['zon', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+            const months = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+            return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        function switchView(view) {
+            document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            if (view === 'today') {
+                document.getElementById('today-view').style.display = 'block';
+            } else if (view === 'week') {
+                document.getElementById('week-view').style.display = 'block';
+            } else if (view === 'overdue') {
+                document.getElementById('overdue-view').style.display = 'block';
+            }
+
+            event.target.classList.add('active');
+        }
+
+        function renderToday() {
+            const todayStr = getDateStr(today);
+            const todayTasks = tasks.filter(t => t.deadline === todayStr);
+            const completedCount = todayTasks.filter(t => t.status === 'done').length;
+            const totalHours = todayTasks.reduce((sum, t) => sum + (t.status === 'done' ? 0 : t.hours), 0);
+            const remainingCount = todayTasks.filter(t => t.status !== 'done').length;
+
+            document.getElementById('tasks-today').textContent = todayTasks.length;
+            document.getElementById('hours-stat').innerHTML = `<div class="stat-number">${totalHours}h</div><div class="stat-label">Uren</div>`;
+            document.getElementById('completed-stat').innerHTML = `<div class="stat-number">${completedCount}</div><div class="stat-label">Afgerond</div>`;
+            document.getElementById('remaining-stat').innerHTML = `<div class="stat-number">${remainingCount}</div><div class="stat-label">Te gaan</div>`;
+
+            let html = '';
+            if (totalHours > 8) {
+                html += `<div class="warning-box"><strong>⚠️ OVERBELAST!</strong> Je hebt ${totalHours} uur gepland vandaag. Dat is meer dan 8 uur. Dit kan niet allemaal.</div>`;
+            }
+
+            if (todayTasks.length === 0) {
+                html += `<div class="empty-state"><div class="empty-state-icon">✅</div><p>Geen taken vandaag!</p></div>`;
+            } else {
+                todayTasks.forEach(task => {
+                    const isDone = task.status === 'done';
+                    html += `
+                        <div class="task-item ${isDone ? 'done' : ''}" onclick="toggleTask(${task.id})">
+                            <div class="checkbox">${isDone ? '✓' : ''}</div>
+                            <div class="task-info">
+                                <div class="task-client">${task.client}</div>
+                                <div class="task-detail">${task.name}</div>
+                            </div>
+                            <div class="task-time">${task.hours}h</div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('today-tasks').innerHTML = html;
+        }
+
+        function renderWeek() {
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+
+            let html = '';
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(date.getDate() + i);
+                const dateStr = getDateStr(date);
+                const dayTasks = tasks.filter(t => t.deadline === dateStr && t.status !== 'done');
+                const totalHours = dayTasks.reduce((sum, t) => sum + t.hours, 0);
+                const dayNames = ['Zon', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'];
+
+                const isPast = date < today;
+                html += `
+                    <div class="day-card ${isPast ? 'past' : 'future'}">
+                        <div class="day-name">${dayNames[date.getDay()]} ${date.getDate()}</div>
+                        <div class="day-tasks">${dayTasks.length} taken</div>
+                        <div class="day-hours">${totalHours}h</div>
+                    </div>
+                `;
+            }
+            document.getElementById('week-preview').innerHTML = html;
+        }
+
+        function renderOverdue() {
+            const todayStr = getDateStr(today);
+            const overdueTasks = tasks.filter(t => t.deadline < todayStr && t.status !== 'done');
+
+            let html = '';
+            if (overdueTasks.length === 0) {
+                html += `<div class="empty-state"><div class="empty-state-icon">✨</div><p>Geen achterstand!</p></div>`;
+            } else {
+                html += `<div class="warning-box"><strong>🚨 ${overdueTasks.length} taken</strong> zijn voorbij deadline. Dit moet eerst!</div>`;
+                overdueTasks.forEach(task => {
+                    html += `
+                        <div class="task-item overdue" onclick="toggleTask(${task.id})">
+                            <div class="checkbox"></div>
+                            <div class="task-info">
+                                <div class="task-client">${task.client}</div>
+                                <div class="task-detail">${task.name}</div>
+                                <div style="font-size: 11px; color: #c53030; margin-top: 5px;">⏰ Was voor ${formatDate(task.deadline)}</div>
+                            </div>
+                            <div class="task-time">${task.hours}h</div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('overdue-tasks').innerHTML = html;
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'done' ? 'pending' : 'done';
+                localStorage.setItem('focus-tasks', JSON.stringify(tasks));
+                render();
+            }
+        }
+
+        function render() {
+            document.getElementById('date-display').textContent = `📅 ${formatDate(getDateStr(today))}`;
+            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('nl-NL');
+            renderToday();
+            renderWeek();
+            renderOverdue();
+        }
+
+        // Initialize
+        window.addEventListener('load', render);
+    </script>
+</body>
+</html>
