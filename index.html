@@ -392,6 +392,7 @@
             <button class="tab-btn active" onclick="switchView('today')">📅 Vandaag</button>
             <button class="tab-btn" onclick="switchView('week')">📊 Deze week</button>
             <button class="tab-btn" onclick="switchView('overdue')">⚠️ Achterstand</button>
+            <button class="tab-btn" onclick="switchView('all')">📋 Alle taken</button>
         </div>
 
         <!-- TODAY VIEW -->
@@ -415,6 +416,14 @@
             <div class="section">
                 <h2>Achterstand (gemist)</h2>
                 <div id="overdue-tasks"></div>
+            </div>
+        </div>
+
+        <!-- ALL TASKS VIEW -->
+        <div id="all-view" class="tab-view" style="display: none;">
+            <div class="section">
+                <h2>Alle taken (To-Do Checklist)</h2>
+                <div id="all-tasks"></div>
             </div>
         </div>
 
@@ -475,6 +484,8 @@
                 document.getElementById('week-view').style.display = 'block';
             } else if (view === 'overdue') {
                 document.getElementById('overdue-view').style.display = 'block';
+            } else if (view === 'all') {
+                document.getElementById('all-view').style.display = 'block';
             }
 
             event.target.classList.add('active');
@@ -570,6 +581,57 @@
             document.getElementById('overdue-tasks').innerHTML = html;
         }
 
+        function renderAll() {
+            // Group tasks by deadline
+            const tasksByDate = {};
+            tasks.forEach(task => {
+                if (!tasksByDate[task.deadline]) {
+                    tasksByDate[task.deadline] = [];
+                }
+                tasksByDate[task.deadline].push(task);
+            });
+
+            // Sort dates
+            const sortedDates = Object.keys(tasksByDate).sort();
+
+            let html = '';
+            const completedCount = tasks.filter(t => t.status === 'done').length;
+            const totalCount = tasks.length;
+
+            html += `<div class="success-box"><strong>✓ ${completedCount}/${totalCount}</strong> taken afgerond</div>`;
+
+            sortedDates.forEach(dateStr => {
+                const dateTasks = tasksByDate[dateStr];
+                const formattedDate = formatDate(dateStr);
+                const dayHours = dateTasks.reduce((sum, t) => sum + t.hours, 0);
+                const completedInDay = dateTasks.filter(t => t.status === 'done').length;
+
+                html += `<div style="margin-bottom: 25px;">`;
+                html += `<div style="font-weight: 600; color: #1a1a1a; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb;">
+                    ${formattedDate} — ${dateTasks.length} taken (${dayHours}h) — ${completedInDay}/${dateTasks.length} afgerond
+                </div>`;
+
+                dateTasks.forEach(task => {
+                    const isDone = task.status === 'done';
+                    html += `
+                        <div class="task-item ${isDone ? 'done' : ''}" onclick="toggleTask(${task.id})" style="cursor: pointer;">
+                            <div class="checkbox">${isDone ? '✓' : ''}</div>
+                            <div class="task-info">
+                                <div class="task-client" style="${isDone ? 'text-decoration: line-through; color: #999;' : ''}">${task.client}</div>
+                                <div class="task-detail" style="${isDone ? 'text-decoration: line-through; color: #999;' : ''}">${task.name}</div>
+                                <div style="font-size: 11px; color: #4a5568; margin-top: 5px;">${task.type}</div>
+                            </div>
+                            <div class="task-time">${task.hours}h</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            });
+
+            document.getElementById('all-tasks').innerHTML = html;
+        }
+
         function toggleTask(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
@@ -585,6 +647,7 @@
             renderToday();
             renderWeek();
             renderOverdue();
+            renderAll();
         }
 
         // Initialize
