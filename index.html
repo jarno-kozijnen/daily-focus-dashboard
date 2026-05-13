@@ -391,36 +391,41 @@
     <script>
         // Tasks from Google Sheet
         const allTasks = [
-            // KUCHENWELT
-            { id: 1, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: '11× Betonlook, Eiland, Greeploos, etc.', deadline: '2026-05-15', hours: 3, status: 'pending' },
-            { id: 2, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: 'Batch Mei Blok 1 (10×)', deadline: '2026-05-19', hours: 4, status: 'pending' },
-            { id: 3, client: 'Kuchenwelt', type: 'SEO Content (Herschrijven)', name: 'Batch Mei Blok 2 (10×)', deadline: '2026-05-21', hours: 4, status: 'pending' },
-            { id: 4, client: 'Kuchenwelt', type: 'Linkbuilding', name: 'Linkbuilding batch', deadline: '2026-05-20', hours: 2, status: 'pending' },
+            // MORGEN EN VRIJDAG PRIORITIES
+            // MTPAPIER
+            { id: 1, client: 'MTpapier', type: 'Nieuwsbrief', name: 'Nieuwsbrief maken', deadline: '2026-05-14', hours: 1, status: 'pending' },
+            { id: 2, client: 'MTpapier', type: 'Marketing', name: 'Facebook GTM instellen', deadline: '2026-05-14', hours: 2, status: 'pending' },
+            { id: 3, client: 'MTpapier', type: 'SEO Content', name: '4 SEO pagina\'s schrijven', deadline: '2026-05-15', hours: 4, status: 'pending' },
+            { id: 4, client: 'MTpapier', type: 'Google Ads', name: 'Ads Search toevoegen', deadline: '2026-05-15', hours: 2, status: 'pending' },
 
-            // KITCHEN247
-            { id: 5, client: 'Kitchen247', type: 'SEO Content (Blogs)', name: '6× Blogs inhaal April', deadline: '2026-05-15', hours: 1, status: 'pending' },
-            { id: 6, client: 'Kitchen247', type: 'SEO Content (Blogs)', name: '6× Blogs batch mei', deadline: '2026-05-20', hours: 1, status: 'pending' },
-            { id: 7, client: 'Kitchen247', type: 'Linkbuilding', name: 'Linkbuilding batch', deadline: '2026-05-20', hours: 2, status: 'pending' },
-
-            // BAMBOOSA
-            { id: 8, client: 'Bamboosa', type: 'Google Ads', name: 'Wekelijkse check (Google/Meta)', deadline: '2026-05-18', hours: 1, status: 'pending' },
-            { id: 9, client: 'Bamboosa', type: 'Google Ads', name: 'Wekelijkse check (Google/Meta)', deadline: '2026-05-25', hours: 1, status: 'pending' },
-
-            // PLAATWEB
-            { id: 10, client: 'Plaatweb', type: 'Google Ads', name: 'Google Ads check & optimalisatie', deadline: '2026-05-18', hours: 1, status: 'pending' },
-            { id: 11, client: 'Plaatweb', type: 'Google Ads', name: 'Google Ads check & optimalisatie', deadline: '2026-05-25', hours: 1, status: 'pending' },
+            // SOLARIN (NIEUW - SETUP)
+            { id: 5, client: 'Solarin', type: 'Google Ads', name: 'Google Ads account opzetten', deadline: '2026-05-14', hours: 3, status: 'pending' },
+            { id: 6, client: 'Solarin', type: 'Google Ads', name: 'GMC koppelen', deadline: '2026-05-14', hours: 2, status: 'pending' },
+            { id: 7, client: 'Solarin', type: 'Google Ads', name: 'GTM tracking inrichten', deadline: '2026-05-15', hours: 2, status: 'pending' },
 
             // DIRECT VERDUURZAMEN
-            { id: 12, client: 'Direct Verduurzamen', type: 'Content-dag', name: '5 blogs + 5 herschrijven + projects + SM + dashboard', deadline: '2026-05-18', hours: 8, status: 'pending' },
-            { id: 13, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-18', hours: 0.5, status: 'pending' },
-            { id: 14, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-21', hours: 0.5, status: 'pending' },
-            { id: 15, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-25', hours: 0.5, status: 'pending' },
-            { id: 16, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Meta ads monitoring', deadline: '2026-05-28', hours: 0.5, status: 'pending' },
-            { id: 17, client: 'Direct Verduurzamen', type: 'Linkbuilding', name: 'Linkbuilding', deadline: '2026-05-20', hours: 0.5, status: 'pending' },
+            { id: 8, client: 'Direct Verduurzamen', type: 'Meta Ads', name: 'Ads live: Video Anouk & Statische ads', deadline: '2026-05-14', hours: 3, status: 'pending' },
+            { id: 9, client: 'Direct Verduurzamen', type: 'Dashboard', name: 'Dashboard updaten', deadline: '2026-05-14', hours: 1, status: 'pending' },
+            { id: 10, client: 'Direct Verduurzamen', type: 'CRM', name: 'Joey: 2 vragen toevoegen aan comment veld', deadline: '2026-05-14', hours: 1, status: 'pending' },
+            { id: 11, client: 'Direct Verduurzamen', type: 'SEO Content', name: '5 nieuwe blogs (Inhaal April)', deadline: '2026-05-15', hours: 2.5, status: 'pending' },
+            { id: 12, client: 'Direct Verduurzamen', type: 'SEO Content', name: '5 herschrijven pagina\'s (Inhaal April)', deadline: '2026-05-15', hours: 2.5, status: 'pending' },
+            { id: 13, client: 'Direct Verduurzamen', type: 'Social Media', name: 'Social posts inplannen (Mei)', deadline: '2026-05-14', hours: 1, status: 'pending' },
+            { id: 14, client: 'Direct Verduurzamen', type: 'Website', name: '3 projecten plaatsen (Mei)', deadline: '2026-05-14', hours: 1.5, status: 'pending' },
 
-            // MTPAPIER
-            { id: 18, client: 'MTpapier', type: 'Nieuwsbrief', name: 'Nieuwsbrief maken', deadline: '2026-05-14', hours: 1, status: 'pending' },
-            { id: 19, client: 'MTpapier', type: 'Nieuwsbrief', name: 'Batch: 4 nieuwsbrieven', deadline: '2026-05-21', hours: 2, status: 'pending' },
+            // KNUS LIVING
+            { id: 15, client: 'KNUS Living', type: 'Email Marketing', name: 'Nieuwsbrief', deadline: '2026-05-14', hours: 1.5, status: 'pending' },
+
+            // PELLETKACHEL (NIEUW)
+            { id: 16, client: 'Pelletkachel', type: 'Ecommerce', name: 'Productpagina pelletkorrels', deadline: '2026-05-14', hours: 2, status: 'pending' },
+
+            // KUCHENWELT
+            { id: 17, client: 'Kuchenwelt', type: 'SEO Content', name: '12 categoriepagina\'s herschrijven', deadline: '2026-05-15', hours: 6, status: 'pending' },
+
+            // KITCHEN247
+            { id: 18, client: 'Kitchen247', type: 'SEO Content', name: '6 nieuwe blogs schrijven', deadline: '2026-05-15', hours: 3, status: 'pending' },
+
+            // ADMIN
+            { id: 19, client: 'Admin', type: 'Email', name: 'Mail beantwoorden (openstaand)', deadline: '2026-05-14', hours: 1, status: 'pending' },
         ];
 
         let tasks = JSON.parse(localStorage.getItem('focus-tasks')) || allTasks;
